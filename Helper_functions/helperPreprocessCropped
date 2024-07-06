@@ -1,0 +1,17 @@
+function preprocessedData = helperPreprocessCropped(trainingData,inputSize,numKeypoints)
+preprocessedData = cell(size(trainingData));
+I = trainingData{1};
+keypoint = trainingData{2}.keypoints{1};
+bbox = trainingData{3};
+[center,scale] = helperBoxToCenterScale(bbox,inputSize(1),inputSize(2));
+trans = helperGetAffineTransform(center,scale,inputSize,false);
+ImageAugmented = imwarp(I,trans,OutputView=imref2d([inputSize(1) inputSize(2)]), ...
+    interpolationMethod="linear",FillValues=0);
+preprocessedData{1} = ImageAugmented;
+for i = 1:numKeypoints
+    keypoint(i,1:2) = affineTransform(keypoint(i,1:2),trans);
+end
+preprocessedData{2} = keypoint;
+preprocessedData{3} = trainingData{3};
+preprocessedData{4} = trainingData{4};
+end
