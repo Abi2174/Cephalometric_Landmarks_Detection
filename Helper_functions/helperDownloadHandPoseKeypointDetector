@@ -1,0 +1,7 @@
+function keypointDetector = helperDownloadHandPoseKeypointDetector()
+pretrainedFolder = 'C:\Users\saini\OneDrive\sSummer Project\HRNet Implitation';
+pretrainedDetectorZip = fullfile(pretrainedFolder,"new_network.zip");
+unzip(pretrainedDetectorZip,pretrainedFolder)
+pretrainedDetector = fullfile(pretrainedFolder,"new_network.mat");
+keypointDetector = load(pretrainedDetector).handPoseKeypointDetector;
+end
