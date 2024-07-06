@@ -1,0 +1,15 @@
+function helperDataStoretWriteFcn(data,writeInfo,~)
+name = erase(writeInfo.SuggestedOutputName,writeInfo.Location);
+name = erase(name,".jpg");
+imageFolder = fullfile(writeInfo.Location,"imagePatches");
+if ~exist(imageFolder,"dir")
+    mkdir(imageFolder)
+end
+imwrite(data{1},fullfile(imageFolder,name + ".jpeg"))
+keypoint = data{2};
+keypointFolder = fullfile(writeInfo.Location,"Keypoints");
+if ~exist(keypointFolder,"dir")
+    mkdir(keypointFolder)
+end
+save(fullfile(keypointFolder,name + ".mat"),"keypoint")
+end
