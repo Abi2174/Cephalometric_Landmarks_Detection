@@ -1,0 +1,37 @@
+function [heatmaps,weights] = helperGenerateHeatmap(keypoints,inputSize,outputSize)
+heatmapSize = [outputSize(2) outputSize(1)];
+sigma = 3;
+featStride = [inputSize(2) inputSize(1)]./heatmapSize;
+numKeypoints = size(keypoints,1);
+heatmaps = zeros([heatmapSize(2) heatmapSize(1) numKeypoints]);
+
+if size(keypoints,2) == 2
+    weights = ones(numKeypoints,1);
+else
+    weights = keypoints(:,3);
+end
+tmpSize = sigma*3;
+for k = 1:numKeypoints
+    muX = round(keypoints(k,1)/featStride(1) + 0.5);
+    muY = round(keypoints(k,2)/featStride(2) + 0.5);
+    upperLeft = [floor(muX - tmpSize) floor(muY - tmpSize)];
+    bottomRight = [floor(muX + tmpSize + 1),floor(muY + tmpSize + 1)];
+    if (upperLeft(1) >= heatmapSize(1) || upperLeft(2) >= heatmapSize(2) || ...
+            bottomRight(1) <  0 ||  bottomRight(2) < 0)
+        weights(k) = 0;
+        continue
+    end
+    sizeRegion = 2*tmpSize + 1;
+    [x,y] = meshgrid(1:sizeRegion,1:sizeRegion);
+    x0 = floor(sizeRegion/2);
+    y0 = x0;
+    g = exp(-((x - x0).^2 + (y - y0).^2) ./ (2*(sigma^2)));
+    gx = [max(0, -upperLeft(1)) min(bottomRight(1),heatmapSize(1))-upperLeft(1)-1] + 1;
+    gy = [max(0, -upperLeft(2)) min(bottomRight(2),heatmapSize(2))-upperLeft(2)-1] + 1;
+    imgx = [max(0, upperLeft(1)) min(bottomRight(1),heatmapSize(1))-1] + 1;
+    imgy = [max(0, upperLeft(2)) min(bottomRight(2),heatmapSize(2))-1] + 1;
+    if weights(k) > 0.5
+        heatmaps(imgy(1):imgy(2),imgx(1):imgx(2),k) = g(gy(1):gy(2),gx(1):gx(2));
+    end
+end
+end
