@@ -1,0 +1,20 @@
+function [X, Y, W] = helperCreateBatchData(images,keypoints,handPoseKeypointDetector)
+% Returns the images combined along the batch dimension as X. It also returns the 
+% generated heat map and its weights combined along the batch dimension as Y and W respectively.
+inputSize = handPoseKeypointDetector.InputSize;
+outputSize = [inputSize(1)/4 inputSize(2)/4];
+numKeypoints = size(handPoseKeypointDetector.KeyPointClasses,1);
+miniBatchSize = size(images,1);
+X = zeros(inputSize(1),inputSize(2),inputSize(3),miniBatchSize,"single");
+Y = zeros(outputSize(1),outputSize(2),numKeypoints,miniBatchSize,"single");
+W = zeros(outputSize(1),outputSize(2),numKeypoints,miniBatchSize,"single");
+
+for k = 1:miniBatchSize
+    I = images{k};
+    keypoint = keypoints{k}.keypoint;
+    X(:,:,:,k) = single(rescale(I));
+    [heatmaps,weights] = helperGenerateHeatmap(single(keypoint),inputSize,outputSize);
+    Y(:,:,:,k) = single(heatmaps);
+    W(:,:,:,k) = repmat(permute(weights,[2 3 1]),outputSize(1:2));
+end
+end
