@@ -1,0 +1,5 @@
+function newJoint = affineTransform(keypoint,trans)
+    newJoint = [keypoint(1) keypoint(2)  1];
+    newJoint = trans.A*newJoint';
+    newJoint = newJoint(1:2);
+end
