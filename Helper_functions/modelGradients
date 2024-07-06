@@ -1,0 +1,6 @@
+function [gradients,loss,dlYPredOut,state] = modelGradients(detector,dlX,dlY,dlW)  
+% Loss and gradient calculation during the forward pass
+[dlYPredOut,state] = forward(detector,dlX);
+loss = helperCalculateLoss(dlYPredOut,dlW,dlY);
+gradients = dlgradient(loss,detector.Learnables);
+end
