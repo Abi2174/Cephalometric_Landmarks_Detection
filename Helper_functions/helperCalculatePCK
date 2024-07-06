@@ -1,0 +1,9 @@
+function pckcurrent = helperCalculatePCK(pred,groundtruth,normalizationFactor,threshold)
+assert(size(pred,1) == size(groundtruth,1) && size(pred,2) == size(groundtruth,2) && size(pred,3) == size(groundtruth,3))
+pckcurrent = [];
+for imgidx = 1:size(pred,3)
+    pck = mean(sqrt((pred(:,1,imgidx)-groundtruth(:,1,imgidx)).^2+(pred(:,2,imgidx)-groundtruth(:,2,imgidx)).^2)./normalizationFactor<threshold);
+    pckcurrent = [pckcurrent pck];
+end
+pckcurrent = mean(pckcurrent);
+end
