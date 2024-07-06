@@ -1,0 +1,41 @@
+% Specify the filename
+filename = "C:\Users\saini\OneDrive\Desktop\datarotated270.xlsx"; % Update the path to the actual Excel file
+
+% Read the data from the Excel file
+data = readmatrix(filename);
+
+% Number of rows in the data
+numRows = size(data, 1);
+
+% Number of columns in the data
+numCols = size(data, 2);
+
+% Number of columns per 23x2 matrix (since each row contributes to one 23x2 matrix)
+numColsPerMatrix = 23 * 2;
+
+% Number of matrices to create
+numMatrices = numRows;
+
+% Initialize a cell array to hold the matrices
+matrices = cell(numMatrices, 1);
+
+% Verify that the number of columns is sufficient for 23x2 matrices
+assert(numCols == numColsPerMatrix, 'Number of columns in the data must be exactly 46 to form 23x2 matrices');
+
+% Process the data
+for i = 1:numMatrices
+    % Extract the current row
+    row = data(i, :);
+    
+    % Reshape the row into a 23x2 matrix
+    matrix = reshape(row, [2, 23])';
+    
+    % Store the matrix in the cell array
+    matrices{i} = matrix;
+end
+
+% Create the MATLAB table
+T = table(matrices, 'VariableNames', {'keypoints'});
+
+% Display the table
+disp(T);
