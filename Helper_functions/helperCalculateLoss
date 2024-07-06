@@ -1,0 +1,10 @@
+function loss = helperCalculateLoss(dlYPred,dlW,dlY)
+outputSize = size(dlYPred,[1 2]);
+dlW = logical(dlW);
+dlY = reshape(dlY.*dlW,size(dlY,1),size(dlY,2),[]);
+dlY = dlarray(dlY,"SSB");
+dlYPred = reshape(dlYPred.*dlW,size(dlYPred,1),size(dlYPred,2),[]);
+dlYPred = dlarray(dlYPred,"SSB");
+loss = mse(dlYPred,dlY);
+loss = (loss*1./(outputSize(1)*outputSize(2)));
+end
