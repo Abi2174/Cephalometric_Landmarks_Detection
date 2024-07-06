@@ -1,0 +1,22 @@
+% Load your actual tables (replace with your actual loading code)
+% For example, if the tables are stored in .mat files:
+% load('table1.mat'); % This should load a variable T1
+% load('table2.mat'); % This should load a variable T2
+
+% Example tables (replace these with your actual tables)
+Var1_T1 = repmat("C:\Users\saini\OneDrive\Summer Project\PatientXrayRecord_90P_001T", 120, 1);
+keypoints_T1 = rand(120, 23, 2); % Replace with actual data
+BoundingBox_T1 = arrayfun(@(x) sprintf('[%d,%d,%d,%d]', x, x+1, x+2, x+3), 1:120, 'UniformOutput', false)';
+T1 = table(Var1_T1, keypoints_T1, BoundingBox_T1, 'VariableNames', {'Var1', 'keypoints', 'BoundingBox'});
+
+Var1_T2 = repmat("C:\Users\saini\OneDrive\Summer Project\PatientXrayRecord_90P_001T", 120, 1);
+keypoints_T2 = rand(120, 23, 2); % Replace with actual data
+BoundingBox_T2 = arrayfun(@(x) sprintf('[%d,%d,%d,%d]', x, x+1, x+2, x+3), 121:240, 'UniformOutput', false)';
+T2 = table(Var1_T2, keypoints_T2, BoundingBox_T2, 'VariableNames', {'Var1', 'keypoints', 'BoundingBox'});
+
+% Merge the tables vertically
+T_merged = vertcat(T1, T2);
+
+% Display the merged table and its size
+disp(T_merged);
+disp(size(T_merged));
