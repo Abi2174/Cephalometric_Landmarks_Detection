@@ -1,0 +1,35 @@
+function transformMatrix = helperGetAffineTransform(center,scale,outputHeatMapSize,invAffineTransform)
+% center: Center of the bounding box [x y].
+% scale: Scale of the bounding box, normalized by the scale factor, [width height].
+% outputHeatMapSize: Size of the destination heatmaps.
+% invAffineTransform (boolean): Option to invert the affine transform direction.
+% (inv=False: src->dst or inv=True: dst->src).
+
+% shift (0-100%): Shift translation ratio with regard to the width and height.
+shift = [0 0];
+
+% pixelStd is 200 as per https://github.com/open-mmlab/mmpose/blob/master/mmpose/core/post_processing/post_transforms.py.
+scaleTmp = scale*200.0;
+srcWidth = scaleTmp(1);
+dstHeight = outputHeatMapSize(1);
+dstWidth = outputHeatMapSize(2);
+
+srcPoint = [1 srcWidth*-0.5];
+dstDir = double([1 dstWidth*-0.5]);
+
+src = zeros(3,2);
+dst = zeros(3,2);
+src(1,:) = center + scaleTmp.*shift;
+src(2,:) = center + srcPoint + scaleTmp.*shift;
+dst(1,:) = [dstWidth*0.5 dstHeight*0.5];
+dst(2,:) = [dstWidth*0.5 dstHeight*0.5] + dstDir;
+
+src(3,:) = helperGetThirdPoint(src(1,:),src(2,:));
+dst(3,:) = helperGetThirdPoint(dst(1,:),dst(2,:));
+
+if invAffineTransform
+    transformMatrix = fitgeotform2d(dst,src,"affine");
+else
+    transformMatrix = fitgeotform2d(src,dst,"affine");
+end
+end
